@@ -1,0 +1,58 @@
+<html>
+	<head>
+		<script src="//cdn.webrtc-experiment.com/DataChannel.js"></script>
+		<!--From https://github.com/muaz-khan/WebRTC-Experiment/tree/master/DataChannel-->
+	</head>
+
+	<body>
+		<h1>Hello!</h1>
+		<script>//code for parameter access taken from http://stackoverflow.com/a/901144/2009336
+			function getParameterByName(name) {
+				name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+				var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				results = regex.exec(location.search);
+				return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+			}
+		</script>
+		<script>
+			var channel = new DataChannel();
+
+			var channels = [];
+
+			var channelId = getParameterByName("id") || undefined;
+
+			if(channelId)
+				channel.connect(channelId)
+			else{
+				var channelId = makeRoomId()
+				channel.open(channelId)
+				console.log("Room id: " + channelId)
+				console.log("Tell a friend to connect to " + document.URL.substr(0, document.URL.lastIndexOf("/")) + "/?id=" + channelId)
+				window.history.pushState("", "Title", "/?id=" + channelId);
+			}
+
+			channel.onopen = function (userid) {
+				console.log(userid + " joined")
+			};
+
+			channel.onmessage = function (message, userid) {
+				console.log(userid + ': ' + message)
+			};
+
+			channel.onleave = function (userid) {
+				console.log(userid + " left")
+			};
+
+			function makeRoomId(){
+				return Math.random().toString(16).substr(2,5);
+			}
+
+			function message(text){
+				channel.send(text)
+				console.log("You: " + text)
+			}
+
+
+		</script>
+	</body>
+</html>
