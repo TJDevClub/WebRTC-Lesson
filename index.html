@@ -5,7 +5,8 @@
 	</head>
 
 	<body>
-		<h1>Hello!</h1>
+		<h1>Web-RTC Demo</h1>
+		<h2>Look in the console for instructions</h2>
 		<script>//code for parameter access taken from http://stackoverflow.com/a/901144/2009336
 			function getParameterByName(name) {
 				name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -14,12 +15,11 @@
 				return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 			}
 		</script>
-		<script>
+		<script>			
 			var channel = new DataChannel();
-
 			var channels = [];
-
 			var channelId = getParameterByName("id") || undefined;
+
 
 			if(channelId)
 				channel.connect(channelId)
@@ -30,6 +30,10 @@
 				console.log("Tell a friend to connect to " + document.URL.substr(0, document.URL.lastIndexOf("/")) + "/?id=" + channelId)
 				window.history.pushState("", "Title", "/?id=" + channelId);
 			}
+
+
+			console.log("To send messages, type in %cmessage(\"your message\");", "color:green;background:black;")
+
 
 			channel.onopen = function (userid) {
 				console.log(userid + " joined")
@@ -42,6 +46,7 @@
 			channel.onleave = function (userid) {
 				console.log(userid + " left")
 			};
+
 
 			function makeRoomId(){
 				return Math.random().toString(16).substr(2,5);
